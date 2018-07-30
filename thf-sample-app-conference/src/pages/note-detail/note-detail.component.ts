@@ -31,18 +31,36 @@ export class NoteDetailPage {
       title: `Remove ${this.note.title}`,
       message: 'Would you like to remove this note?',
       buttons: [
-        { text: 'Cancel', handler: () => {} },
-        { text: 'Remove',  handler: () => this.removeNote() }
+        { text: 'Cancel', handler: () => { } },
+        { text: 'Remove', handler: () => this.removeNote() }
       ]
     });
     alert.present();
   }
 
   async saveNote() {
-    this.note.lectureId = this.navParams.data.lectureId;
-    this.note.userId = await this.userService.getLoggedUserId();
+    const notes = await this.noteService.getNotes();
 
-    await this.noteService.save(this.note);
+    //// Melhor pratica!
+    // for (const element of notes) {
+    //   element.text = this.note.text;
+    //   try {
+    //     await this.noteService.save(element);
+    //   } catch (err) {
+    //     break;
+    //   }
+    // }
+
+    let saved = true;
+    for (const element of notes) {
+      element.text = this.note.text;
+      await this.noteService.save(element).catch(err => {
+        saved = false;
+      });
+      if (!saved) {
+        break;
+      }
+    }
 
     const toast = this.toastCtrl.create({
       message: 'Saved note',

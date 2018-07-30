@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 
 @Injectable()
 export class NoteService {
-  constructor(private thfSync: ThfSyncService, private userService: UserService) {}
+  constructor(private thfSync: ThfSyncService, private userService: UserService) { }
 
   getNoteModel() {
     return this.thfSync.getModel('Notes');
@@ -28,7 +28,21 @@ export class NoteService {
   }
 
   save(note) {
-    return this.getNoteModel().save(note);
+    // Melhor pratica!
+    // return this.getNoteModel().save(note);
+    return new Promise<any>((resolve, reject) => {
+      this.getNoteModel().save(note).then(
+        data => {
+          console.log('Salvou com sucesso: ', data);
+          resolve(data);
+        }
+      ).catch(
+        err => {
+          console.log('Erro ao salvar o fardo: ', err);
+          reject(err);
+        }
+      );
+    });
   }
 
   synchronize() {
