@@ -1,28 +1,11 @@
 'use strict';
 
+
 var notesCount = { "length": undefined };
 var totvsResponse = { "hasNext": false, "items": [] };
-var notes = [{
-  id: "1",
-  title: "Basic RESTful API in NodeJS",
-  text: "Note of Basic RESTful API in NodeJS",
-  lectureId: "2",
-  userId: "2",
-  createdDate: new Date().toISOString(),
-  updatedDate: new Date().toISOString(),
-  deletedDate: undefined,
-  deleted: false
-}, {
-  id: "2",
-  title: "Unit testing for beginners",
-  text: "Note of unit testing for beginners",
-  lectureId: "1",
-  userId: "2",
-  createdDate: new Date().toISOString(),
-  updatedDate: new Date().toISOString(),
-  deletedDate: undefined,
-  deleted: false
-}];
+var notes = require('./Notes').notes;
+
+console.log(notes);
 
 exports.findNotesByUserId = function (userId) {
   return notes.filter(note => note.userId == userId);
@@ -33,8 +16,8 @@ exports.findNotesByUserId = function (userId) {
  *
  * returns BigDecimal
  **/
-exports.notesCountGET = function() {
-  return new Promise(function(resolve, reject) {
+exports.notesCountGET = function () {
+  return new Promise(function (resolve, reject) {
     if (notes) {
       notesCount.length = notes.length;
       resolve(notesCount);
@@ -50,8 +33,8 @@ exports.notesCountGET = function() {
  * date Date Date.
  * returns notesResponse
  **/
-exports.notesDiffDateGET = function(date) {
-  return new Promise(function(resolve) {
+exports.notesDiffDateGET = function (date) {
+  return new Promise(function (resolve) {
     totvsResponse.items = notes.filter(note => {
       return new Date(note.updatedDate) >= new Date(date);
     });
@@ -132,7 +115,7 @@ exports.notesIdPUT = function (id, body) {
       note.lectureId = body.lectureId;
       note.userId = body.userId;
       note.updatedDate = new Date().toISOString();
-      
+
       resolve(note);
     } else {
       reject(404);

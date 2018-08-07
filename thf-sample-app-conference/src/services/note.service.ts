@@ -28,21 +28,20 @@ export class NoteService {
   }
 
   save(note) {
-    // Melhor pratica!
-    // return this.getNoteModel().save(note);
-    return new Promise<any>((resolve, reject) => {
-      this.getNoteModel().save(note).then(
-        data => {
-          console.log('Salvou com sucesso: ', data);
-          resolve(data);
-        }
-      ).catch(
-        err => {
-          console.log('Erro ao salvar o fardo: ', err);
-          reject(err);
-        }
-      );
-    });
+    return this.getNoteModel().save(note);
+
+    // Exemplo do Francisco
+    // return new Promise<any>((resolve, reject) => {
+    //   this.getNoteModel().save(note).then(
+    //     data => {
+    //       resolve(data);
+    //     }
+    //   ).catch(
+    //     err => {
+    //       reject(err);
+    //     }
+    //   );
+    // });
   }
 
   synchronize() {

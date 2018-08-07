@@ -5,6 +5,7 @@ import { AlertController, NavController, NavParams, ToastController } from 'ioni
 import { NoteListPage } from './../note-list/note-list.component';
 import { NoteService } from '../../services/note.service';
 import { UserService } from './../../services/user.service';
+import { ThfStorageService } from '@totvs/thf-storage';
 
 @Component({
   selector: 'page-note-detail',
@@ -20,6 +21,7 @@ export class NoteDetailPage {
     public toastCtrl: ToastController,
     private noteService: NoteService,
     private userService: UserService,
+    private storage: ThfStorageService
   ) { }
 
   ionViewDidLoad() {
@@ -39,28 +41,29 @@ export class NoteDetailPage {
   }
 
   async saveNote() {
-    const notes = await this.noteService.getNotes();
+    const notes = await this.storage.get('Notes');
 
-    //// Melhor pratica!
-    // for (const element of notes) {
-    //   element.text = this.note.text;
-    //   try {
-    //     await this.noteService.save(element);
-    //   } catch (err) {
-    //     break;
-    //   }
-    // }
-
-    let saved = true;
     for (const element of notes) {
       element.text = this.note.text;
-      await this.noteService.save(element).catch(err => {
-        saved = false;
-      });
-      if (!saved) {
+      try {
+        await this.noteService.save(element);
+      } catch (err) {
+        console.error(err);
         break;
       }
     }
+
+    // Exemplo do Francisco
+    // let saved = true;
+    // for (const element of notes) {
+    //   element.text = this.note.text;
+    //   await this.noteService.save(element).catch(err => {
+    //     saved = false;
+    //   });
+    //   if (!saved) {
+    //     break;
+    //   }
+    // }
 
     const toast = this.toastCtrl.create({
       message: 'Saved note',
